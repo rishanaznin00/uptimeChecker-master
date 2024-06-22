@@ -22,6 +22,8 @@ public class CsvFIleGenerator {
     private String endOfDayDowntimeDatafilePath;
     @Value("${downtime.file.headers}")
     private String[] endOfDayDowntimeDatafileHeaders;
+    private Writer writer;
+
     public String writeDowntimeInfoToCSV(List<Downtime> downtimeSet, Date date) throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String fileName=endOfDayDowntimeDatafileName +sdf.format(date)+".csv";
