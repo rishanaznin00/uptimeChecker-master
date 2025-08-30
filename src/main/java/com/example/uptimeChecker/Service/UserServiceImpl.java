@@ -10,7 +10,7 @@ import com.example.uptimeChecker.Exceptions.ResourceNotFoundException;
 import com.example.uptimeChecker.Exceptions.UnauthorizedException;
 import com.example.uptimeChecker.Exceptions.UnprocessableEntityException;
 import com.example.uptimeChecker.Repositories.UserRepository;
-import com.sun.xml.internal.fastinfoset.util.CharArray;
+import com.sun.xml.fastinfoset.util.CharArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;

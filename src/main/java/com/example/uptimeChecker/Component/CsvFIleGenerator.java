@@ -22,7 +22,6 @@ public class CsvFIleGenerator {
     private String endOfDayDowntimeDatafilePath;
     @Value("${downtime.file.headers}")
     private String[] endOfDayDowntimeDatafileHeaders;
-    private Writer writer;
 
     public String writeDowntimeInfoToCSV(List<Downtime> downtimeSet, Date date) throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -31,7 +30,7 @@ public class CsvFIleGenerator {
 
         if(!tempFile.exists()) {
 
-            Writer writer = new FileWriter(endOfDayDowntimeDatafilePath + fileName);
+            final Writer writer = new FileWriter(endOfDayDowntimeDatafilePath + fileName);
             try (CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(endOfDayDowntimeDatafileHeaders))) {
                 downtimeSet.forEach(downtime -> {
                     try {

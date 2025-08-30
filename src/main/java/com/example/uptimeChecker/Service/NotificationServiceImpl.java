@@ -35,49 +35,50 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${slack.channel}")
     private String slackChannelName;
     @Value("${slack.bot.name}")
-    private String  userName;
+    private String userName;
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
+
     @RabbitListener(queues = RabbitmqConstants.EMAIL_QUEUE_NAME)
-    public void sendDowntimeNotificationEmailFromQueue(String message){
+    public void sendDowntimeNotificationEmailFromQueue(String message) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-           EmailDetailsDTO emailDetailsDTO= mapper.readValue(message, EmailDetailsDTO.class);
-           emailService.sendMail(emailDetailsDTO);
+            EmailDetailsDTO emailDetailsDTO = mapper.readValue(message, EmailDetailsDTO.class);
+            emailService.sendMail(emailDetailsDTO);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            logger.error("Some error occurred at sendDowntimeNotificationEmailFromQueue "+e.getMessage());
+            logger.error("Some error occurred at sendDowntimeNotificationEmailFromQueue " + e.getMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
-            logger.error("Some error occurred at sendDowntimeNotificationEmailFromQueue "+e.getMessage());
+            logger.error("Some error occurred at sendDowntimeNotificationEmailFromQueue " + e.getMessage());
         }
 
     }
 
     @RabbitListener(queues = RabbitmqConstants.SLACK_QUEUE_NAME)
-    public void sendDowntimeSlackNotificationFromQueue(String message){
+    public void sendDowntimeSlackNotificationFromQueue(String message) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            SlackMessageDetailDTO slackMessageDetailDTO= mapper.readValue(message, SlackMessageDetailDTO.class);
+            SlackMessageDetailDTO slackMessageDetailDTO = mapper.readValue(message, SlackMessageDetailDTO.class);
             slackMessageService.sendSlackMessage(slackMessageDetailDTO);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            logger.error("Some error occurred at sendDowntimeSlackNotificationFromQueue "+e.getMessage());
+            logger.error("Some error occurred at sendDowntimeSlackNotificationFromQueue " + e.getMessage());
 
         }
 
     }
 
     @Override
-    public void sendMessageToUsers(WebsiteDetailsDTO websiteDetailsDTO)  {
+    public void sendMessageToUsers(WebsiteDetailsDTO websiteDetailsDTO) {
         Set<UserDTO> users;
-       // users.add(new User("risha","", true, "rishanaznin@gmail.com",""));
-        users =websiteUserService.getUsersByWebsite(websiteDetailsDTO.getWebId());
+        // users.add(new User("risha","", true, "rishanaznin@gmail.com",""));
+        users = websiteUserService.getUsersByWebsite(websiteDetailsDTO.getWebId());
         EmailDetailsDTO emailDetailsDTO;
         SlackMessageDetailDTO slackMessageDetailDTO;
-        if(users.size()>0){
-            for(UserDTO user: users){
-                if(user.getEmail()!=null && !user.getEmail().isEmpty()) {
+        if (users.size() > 0) {
+            for (UserDTO user : users) {
+                if (user.getEmail() != null && !user.getEmail().isEmpty()) {
                     emailDetailsDTO = new EmailDetailsDTO();
                     emailDetailsDTO.setRecipient(user.getEmail());
                     emailDetailsDTO.setSubject("Downtime Alert");
@@ -89,8 +90,8 @@ public class NotificationServiceImpl implements NotificationService {
                         logger.error("Unable to send message to email queue");
                     }
                 }
-                if(user.getSlackId()!=null && !user.getSlackId().isEmpty()){
-                    slackMessageDetailDTO= new SlackMessageDetailDTO();
+                if (user.getSlackId() != null && !user.getSlackId().isEmpty()) {
+                    slackMessageDetailDTO = new SlackMessageDetailDTO();
                     slackMessageDetailDTO.setChannelName(slackChannelName);
                     slackMessageDetailDTO.setUsername(userName);
                     slackMessageDetailDTO.setMessage(slackMessageService.createSlackMessage(websiteDetailsDTO));
@@ -111,8 +112,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
-
-
     private void sendSlackNotificationToRabbitMQ(SlackMessageDetailDTO slackMessageDetailDTO) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String slackMessageDetailsDTOString;
@@ -125,12 +124,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void sendEmailToRabbitMq(EmailDetailsDTO emailDetailsDTO) throws JsonProcessingException {
-        ObjectMapper mapper= new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         String emailDetailsDTOString;
         try {
             emailDetailsDTOString = mapper.writeValueAsString(emailDetailsDTO);
             amqpTemplate.convertAndSend(
-                    RabbitmqConstants.EXCHANGE_NAME    , RabbitmqConstants.EMAIL_ROUTING_KEY, emailDetailsDTOString);
+                    RabbitmqConstants.EXCHANGE_NAME, RabbitmqConstants.EMAIL_ROUTING_KEY, emailDetailsDTOString);
         } catch (JsonProcessingException e) {
             throw e;
         }
