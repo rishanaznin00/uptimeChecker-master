@@ -1,0 +1,118 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd ">
+    <changeSet id="create-downtime_info-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="downtime_info"/>
+            </not>
+        </preConditions>
+        <createTable tableName="downtime_info">
+            <column name="dt_id" type="VARCHAR(255)"/>
+            <column name="dt_web_id" type="INT"/>
+            <column name="dt_start_time" type="VARCHAR(255)"/>
+            <column name="dt_end_time" type="VARCHAR(255)"/>
+            <column name="dt_date" type="TIMESTAMP"/>
+            <column name="dt_fail_count" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-downtime_summary-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="downtime_summary"/>
+            </not>
+        </preConditions>
+        <createTable tableName="downtime_summary">
+            <column name="date" type="TIMESTAMP">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_DOWNTIME_SUMMARY"/>
+            </column>
+            <column name="web_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_DOWNTIME_SUMMARY"/>
+            </column>
+            <column name="total_downtime" type="BIGINT"/>
+            <column name="uptime_percentage" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-end_of_day_info-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="end_of_day_info"/>
+            </not>
+        </preConditions>
+        <createTable tableName="end_of_day_info">
+            <column name="ed_id" type="VARCHAR(255)"/>
+            <column name="ed_precessed_date" type="TIMESTAMP"/>
+            <column name="ed_status" type="VARCHAR(255)"/>
+            <column name="ed_backup_file_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-eod_processing_day-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="eod_processing_day"/>
+            </not>
+        </preConditions>
+        <createTable tableName="eod_processing_day">
+            <column name="ep_id" type="INT"/>
+            <column name="ep_next_processing_date" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-roles-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="roles">
+            <column name="id" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-users-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users">
+            <column name="user_id" type="INT"/>
+            <column name="username" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="enabled" type="BOOLEAN"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="slack_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-website_detail-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="website_detail"/>
+            </not>
+        </preConditions>
+        <createTable tableName="website_detail">
+            <column name="web_id" type="INT"/>
+            <column name="wb_url" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-website_user_metadata-table" author="risha">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="website_user_metadata"/>
+            </not>
+        </preConditions>
+        <createTable tableName="website_user_metadata">
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEBSITE_USER_METADATA"/>
+            </column>
+            <column name="wb_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEBSITE_USER_METADATA"/>
+            </column>
+            <column name="websiteUserMetaDataPk" type="VARCHAR(255)"/>
+            <column name="wb_name" type="VARCHAR(255)"/>
+            <column name="websiteDetails" type="VARCHAR(255)"/>
+            <column name="user" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
